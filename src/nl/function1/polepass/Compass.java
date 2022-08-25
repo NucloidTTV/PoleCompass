@@ -29,9 +29,13 @@ import org.bukkit.plugin.Plugin;
 public final class Compass extends JavaPlugin {
 
 	CompassEvents compassevents;
+	Commands c_cmd;
 
+	@Override
 	public void onEnable() {
-		Bukkit.getServer().getPluginManager().registerEvents(compassevents, this);
+		this.getServer().getPluginManager().registerEvents(new CompassEvents(this), this);
+		this.getCommand("compass").setExecutor(new Commands(this));
+
 	}
 
 	public void setMetadata(Metadatable object, String key, Object value, Plugin plugin) {

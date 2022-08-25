@@ -16,17 +16,17 @@ public class Commands implements CommandExecutor {
 		this.compass = compass;
 	}
 
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
+		Player target = Bukkit.getServer().getPlayer(args[0]);
 		if (cmd.getName().equalsIgnoreCase("compass")) {
-
 			if (!(sender instanceof Player)) {
-				sender.sendMessage("You must be a player to set your own compass!");
+				sender.sendMessage(ChatColor.BLUE + "You must be a player to set your own compass!");
 				return false;
 			}
 
 			if (args.length < 1) {
-				sender.sendMessage("No arguments specified! View \"compass help\" for help.");
+				sender.sendMessage(ChatColor.BLUE + "use /compass help");
 				return false;
 			}
 
@@ -35,20 +35,20 @@ public class Commands implements CommandExecutor {
 			switch (args[0].toLowerCase()) {
 
 			case "help":
-				p.sendMessage(ChatColor.GOLD + "/compass [direction]" + ChatColor.GRAY
+				p.sendMessage(ChatColor.BLUE + "/compass [direction]" + ChatColor.GRAY
 						+ " - sets your compass direction to North, West, East or South.");
-				p.sendMessage(ChatColor.GOLD + "/compass pos <x> <y> <z>" + ChatColor.GRAY
+				p.sendMessage(ChatColor.BLUE + "/compass pos <x> <y> <z>" + ChatColor.GRAY
 						+ " - sets your compass direction to the specific location.");
-				p.sendMessage(ChatColor.GOLD + "/compass pos current" + ChatColor.GRAY
+				p.sendMessage(ChatColor.BLUE + "/compass pos current" + ChatColor.GRAY
 						+ " - sets your compass direction to your current position.");
-				p.sendMessage(ChatColor.GOLD + "/compass follow <player>" + ChatColor.GRAY
+				p.sendMessage(ChatColor.BLUE + "/compass follow <player>" + ChatColor.GRAY
 						+ " - sets your compass direction to someone else's" + " position. Keeps updating.");
 				// p.sendMessage(ChatColor.GOLD + "/compass about" + ChatColor.GRAY + " - views
 				// the info of the plugin.");
-				p.sendMessage(ChatColor.GOLD + "/compass bed" + ChatColor.GRAY
+				p.sendMessage(ChatColor.BLUE + "/compass bed" + ChatColor.GRAY
 						+ " - sets your compass to your bed's location");
-				p.sendMessage(ChatColor.GOLD + "To make your compass normal again, use /compass reset.");
-				p.sendMessage(ChatColor.GOLD
+				p.sendMessage(ChatColor.BLUE + "To make your compass normal again, use /compass reset.");
+				p.sendMessage(ChatColor.BLUE
 						+ "To modify someone else's compass, use /setplayercompass and then anything listed here.");
 				return true;
 
@@ -61,10 +61,10 @@ public class Commands implements CommandExecutor {
 				String aut = pdf.getAuthors().get(0);
 
 				if (sender instanceof Player) {
-					p.sendMessage(ChatColor.AQUA + name + " " + ver);
-					p.sendMessage(ChatColor.GOLD + des);
-					p.sendMessage(ChatColor.GOLD + "Author: " + ChatColor.RESET + aut);
-					p.sendMessage(ChatColor.GOLD + "URL: " + ChatColor.RESET + url);
+					p.sendMessage(ChatColor.BLUE + name + " " + ver);
+					p.sendMessage(ChatColor.BLUE + des);
+					p.sendMessage(ChatColor.BLUE + "Author: " + ChatColor.RESET + aut);
+					p.sendMessage(ChatColor.BLUE + "URL: " + ChatColor.RESET + url);
 				} else {
 					// TODO: Will never be true. Fix this. I'm lazy.
 					sender.sendMessage(name + " " + ver);
@@ -77,7 +77,7 @@ public class Commands implements CommandExecutor {
 			case "follow":
 			case "f":
 				if (args.length < 2) {
-					p.sendMessage(ChatColor.RED + "Syntax error: Please enter a player to point to with your compass");
+					p.sendMessage(ChatColor.RED + "/f or /follow playername");
 					return false;
 				}
 
@@ -87,26 +87,27 @@ public class Commands implements CommandExecutor {
 
 					p.setCompassTarget(toFollow.getLocation());
 					compass.addTracker(p, toFollow);
-					p.sendMessage("You now follow " + toFollow.getName() + " with your compass!");
+					p.sendMessage(ChatColor.BLUE + "Compass now following" + ChatColor.GOLD + toFollow.getName()
+							+ ChatColor.BLUE + ".");
 					return true;
 
 				} else {
-					p.sendMessage(ChatColor.RED + "\"" + args[1] + "\" is not found on this server");
+					p.sendMessage(ChatColor.RED + "\"" + args[1] + "\" is not found on this server.");
 					return false;
 				}
 
 			case "pos":
 				if (args.length < 2) {
-					p.sendMessage(ChatColor.RED + "Usage: /compass pos current or /compass pos <x> <y> <z>");
+					p.sendMessage(ChatColor.RED + "Usage: /compass pos current or /compass pos <x> <y> <z>.");
 					return false;
 				}
 				if (args[1].toLowerCase().startsWith("c")) {
 					p.setCompassTarget(p.getLocation());
-					p.sendMessage("Your compass is now pointing to your current location.");
+					p.sendMessage(ChatColor.BLUE + "Compass is now pointing to your current location.");
 					return true;
 				}
 				if (args.length < 4) {
-					p.sendMessage(ChatColor.RED + "Usage: /compass pos current or /compass pos <x> <y> <z>");
+					p.sendMessage(ChatColor.RED + "Usage: /compass pos current or /compass pos <x> <y> <z>.");
 					return false;
 				}
 
@@ -115,44 +116,46 @@ public class Commands implements CommandExecutor {
 					int y = Integer.parseInt(args[2]);
 					int z = Integer.parseInt(args[3]);
 					p.setCompassTarget(p.getWorld().getBlockAt(x, y, z).getLocation());
-					p.sendMessage("Your compass is now pointing to " + x + ", " + y + ", " + z);
+					p.sendMessage(ChatColor.BLUE + "Compass facing coordinates" + ChatColor.GRAY + x + ChatColor.BLUE
+							+ ", " + ChatColor.GRAY + y + ChatColor.BLUE + ", " + ChatColor.GRAY + z + ChatColor.BLUE
+							+ ".");
 					return true;
 				} catch (Exception ex) {
-					p.sendMessage("Failed to convert positions");
+					p.sendMessage(ChatColor.RED + "Failed to convert positions.");
 					return false;
 				}
 
 			case "n":
 			case "north":
 				p.setCompassTarget(p.getWorld().getBlockAt((int) p.getLocation().getX(), 0, -12550820).getLocation());
-				p.sendMessage("Your compass has been set to the North");
+				p.sendMessage(ChatColor.BLUE + "Compass facing north.");
 				return true;
 
 			case "e":
 			case "east":
 				p.setCompassTarget(p.getWorld().getBlockAt(12550820, 0, (int) p.getLocation().getZ()).getLocation());
-				p.sendMessage("Your compass has been set to the East");
+				p.sendMessage(ChatColor.BLUE + "Compass facing east.");
 				return true;
 
 			case "s":
 			case "south":
 				p.setCompassTarget(p.getWorld().getBlockAt((int) p.getLocation().getX(), 0, 12550820).getLocation());
-				p.sendMessage("Your compass has been set to the South");
+				p.sendMessage(ChatColor.BLUE + "Compass facing south.");
 				return true;
 
 			case "w":
 			case "west":
 				p.setCompassTarget(p.getWorld().getBlockAt(-12550820, 0, (int) p.getLocation().getZ()).getLocation());
-				p.sendMessage("Your compass has been set to the West");
+				p.sendMessage(ChatColor.BLUE + "Compass facing west.");
 				return true;
 
 			case "bed":
 				if (p.getBedSpawnLocation() != null) {
 					p.setCompassTarget(p.getBedSpawnLocation());
-					p.sendMessage("Your compass has been set to your bed's location");
+					p.sendMessage(ChatColor.BLUE + "Compass facing your bed's location.");
 					return true;
 				} else {
-					p.sendMessage(ChatColor.RED + "You don't have a bed");
+					p.sendMessage(ChatColor.RED + "You don't have a bed.");
 					return false;
 				}
 
@@ -160,7 +163,7 @@ public class Commands implements CommandExecutor {
 			case "reset":
 			case "default":
 				p.setCompassTarget(p.getWorld().getSpawnLocation());
-				p.sendMessage("Your compass has been set to the world's spawnpoint");
+				p.sendMessage(ChatColor.BLUE + "Compass facing world's spawnpoint.");
 				compass.removeTrackerFromRequester(p);
 				return true;
 
@@ -168,17 +171,15 @@ public class Commands implements CommandExecutor {
 				p.sendMessage(ChatColor.RED + "\"" + args[0] + "\" is not a valid direction.");
 				return false;
 			}
-		} else if (cmd.getName().equalsIgnoreCase("setplayercompass")) {
+		} else if (cmd.getName().equalsIgnoreCase("setplayercompass.")) {
 
 			if (args.length < 2) {
-				sender.sendMessage("Syntax error: Too few arguments!");
+				sender.sendMessage(ChatColor.RED + "/setplayercompass <playername>.");
 				return false;
 			}
 
-			Player target = Bukkit.getServer().getPlayer(args[0]);
-
 			if (target == null) {
-				sender.sendMessage("Error: Player \"" + args[0] + "\" not found");
+				sender.sendMessage(ChatColor.RED + "Player \"" + args[0] + "\" not found.");
 				return false;
 			}
 
@@ -186,43 +187,45 @@ public class Commands implements CommandExecutor {
 
 			case "help":
 				// this is only hit when the first argument is a player
-				sender.sendMessage(
-						"/" + cmd.getName().toLowerCase() + " <player> <compass command>. See /compass help");
+				sender.sendMessage(ChatColor.RED + "/" + cmd.getName().toLowerCase()
+						+ " <player> <compass command>. See /compass help.");
 				return true;
 
 			case "f":
 			case "follow":
 				if (args.length < 3) {
-					sender.sendMessage("Syntax error: missing player to follow");
+					sender.sendMessage(ChatColor.RED + "Must include playername.");
 					return false;
 				}
 
 				Player toFollow = Bukkit.getServer().getPlayer(args[2]);
 
 				if (toFollow == null) {
-					sender.sendMessage("Player \"" + args[2] + " not found");
+					sender.sendMessage(ChatColor.RED + "Player \"" + args[2] + " not found.");
 					return false;
 				}
 
 				target.setCompassTarget(toFollow.getLocation());
 				compass.addTracker(target, toFollow);
-				sender.sendMessage(target.getName() + "'s compass is now pointing to " + toFollow.getName());
+				sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.GOLD + "'s" + ChatColor.BLUE
+						+ " compass is now pointing to " + ChatColor.GOLD + toFollow.getName() + ChatColor.BLUE + ".");
 				return true;
 
 			case "pos":
 				if (args.length < 2) {
-					sender.sendMessage("Syntax error: no location specified");
+					sender.sendMessage(ChatColor.RED + "No location specified.");
 					return false;
 				}
 
 				if (args[2].toLowerCase().startsWith("c")) {
 					target.setCompassTarget(target.getLocation());
-					sender.sendMessage(target.getName() + "'s compass is now pointing to " + target.getName()
-							+ " current location");
+					sender.sendMessage(
+							ChatColor.GOLD + target.getName() + ChatColor.BLUE + "'s compass is now pointing to"
+									+ ChatColor.GOLD + target.getName() + ChatColor.BLUE + " current location.");
 					return true;
 				}
 				if (args.length < 5) {
-					sender.sendMessage(ChatColor.RED + "Usage: /compass pos current or /compass pos <x> <y> <z>");
+					sender.sendMessage(ChatColor.RED + "/compass pos current or /compass pos <x> <y> <z>.");
 					return false;
 				}
 
@@ -231,10 +234,12 @@ public class Commands implements CommandExecutor {
 					int y = Integer.parseInt(args[3]);
 					int z = Integer.parseInt(args[4]);
 					target.setCompassTarget(target.getWorld().getBlockAt(x, y, z).getLocation());
-					sender.sendMessage(target.getName() + "'s compass is now pointing to " + x + ", " + y + ", " + z);
+					sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE
+							+ "'s compass is now pointing to" + ChatColor.GRAY + x + ChatColor.BLUE + ", "
+							+ ChatColor.GRAY + y + ChatColor.BLUE + ", " + ChatColor.GRAY + z + ChatColor.BLUE + ".");
 					return true;
 				} catch (Exception ex) {
-					sender.sendMessage("Failed to convert positions");
+					sender.sendMessage(ChatColor.RED + "Failed to convert positions.");
 					return false;
 				}
 
@@ -242,37 +247,38 @@ public class Commands implements CommandExecutor {
 			case "north":
 				target.setCompassTarget(
 						target.getWorld().getBlockAt((int) target.getLocation().getX(), 0, -12550820).getLocation());
-				sender.sendMessage(target.getName() + "'s compass has been set to the North");
+				sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE + "'s compass is facing North.");
 				return true;
 
 			case "e":
 			case "east":
 				target.setCompassTarget(
 						target.getWorld().getBlockAt(12550820, 0, (int) target.getLocation().getZ()).getLocation());
-				sender.sendMessage(target.getName() + "'s compass has been set to the East");
+				sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE + "'s compass is facing east.");
 				return true;
 
 			case "s":
 			case "south":
 				target.setCompassTarget(
 						target.getWorld().getBlockAt((int) target.getLocation().getX(), 0, 12550820).getLocation());
-				sender.sendMessage(target.getName() + "'s compass has been set to the South");
+				sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE + "'s compass is facing south.");
 				return true;
 
 			case "w":
 			case "west":
 				target.setCompassTarget(
 						target.getWorld().getBlockAt(-12550820, 0, (int) target.getLocation().getZ()).getLocation());
-				sender.sendMessage(target.getName() + "'s compass has been set to the West");
+				sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE + "'s compass is facing west.");
 				return true;
 
 			case "bed":
 				if (target.getBedSpawnLocation() != null) {
 					target.setCompassTarget(target.getBedSpawnLocation());
-					sender.sendMessage(target.getName() + "'s compass has been set to your bed's location");
+					sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE
+							+ "'s compass is facing your bed's location.");
 					return true;
 				} else {
-					sender.sendMessage(target.getName() + " doesn't have a bed");
+					sender.sendMessage(ChatColor.GOLD + target.getName() + ChatColor.BLUE + "doesn't have a bed.");
 					return false;
 				}
 
@@ -280,12 +286,13 @@ public class Commands implements CommandExecutor {
 			case "reset":
 			case "default":
 				target.setCompassTarget(target.getWorld().getSpawnLocation());
-				sender.sendMessage(target.getName() + "'s compass has been set to the world's spawnpoint");
+				sender.sendMessage(
+						ChatColor.GOLD + target.getName() + ChatColor.BLUE + "'s compass is facing world's spawnpoint");
 				compass.removeTrackerFromRequester(target);
 				return true;
 
 			default:
-				sender.sendMessage("Syntax error: \"" + args[1] + "\" is not a valid direction or command");
+				sender.sendMessage("Syntax error: \"" + args[1] + "\" is not a valid direction or command.");
 				return false;
 			}
 		}
